@@ -43,29 +43,23 @@ b2grad = zeros(size(b2));
 % 
 m = size(data, 2);
 
-z2_full = W1 * data + repmat(b1, 1, columns(data));
-a2_full = sigmoid(z2_full);
-rho = sum(a2_full, 2) ./ m;
+z2 = W1 * data + repmat(b1, 1, columns(data));
+a2 = sigmoid(z2);
+rho = sum(a2, 2) ./ m;
+z3 = W2 * a2 + repmat(b2, 1, columns(a2));
+a3 = sigmoid(z3);
 
+cost = cost + 0.5 * sum(sum((a3 - data).^2)) / m;
 
-for t = 1:m
-    z2 = W1 * data(:, t) + b1;
-    a2 = sigmoid(z2);
-    z3 = W2 * a2 + b2;
-    a3 = sigmoid(z3);
+delta3 = -(data - a3) .* sigmgrad(z3);
+delta2 = (W2' * delta3 + beta * (-sparsityParam./rho + ...
+          (1-sparsityParam)./(1-rho))) .* sigmgrad(z2);
 
-    cost = cost + 0.5 * sum((a3 - data(:, t)).^2) / m;
+W1grad = W1grad + delta2 * data' / m;
+W2grad = W2grad + delta3 * a2' / m;
+b1grad = b1grad + sum(delta2, 2) / m;
+b2grad = b2grad + sum(delta3, 2) / m;
 
-    delta3 = -(data(:, t) - a3) .* sigmgrad(z3);
-    delta2 = (W2' * delta3 + beta * (-sparsityParam./rho + ...
-              (1-sparsityParam)./(1-rho))) .* sigmgrad(z2);
-
-    W1grad = W1grad + delta2 * data(:, t)' / m;
-    W2grad = W2grad + delta3 * a2' / m;
-    b1grad = b1grad + delta2 / m;
-    b2grad = b2grad + delta3 / m;
-
-end
 
 cost_decay = 0.5 * lambda * (sum(sum(W1.^2)) + sum(sum(W2.^2)));
 KL = sum(sparsityParam .* log(sparsityParam ./ rho) + ...
@@ -79,7 +73,10 @@ W2grad = W2grad + lambda * W2;
 % After computing the cost and gradient, we will convert the gradients back
 % to a vector format (suitable for minFunc).  Specifically, we will unroll
 % your gradient matrices into a vector.
-
+%size(W1grad)
+%size(W2grad)
+%size(b1grad)
+%size(b2grad)
 grad = [W1grad(:) ; W2grad(:) ; b1grad(:) ; b2grad(:)];
 
 end
