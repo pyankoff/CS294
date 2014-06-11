@@ -23,12 +23,32 @@ thetagrad = zeros(numClasses, inputSize);
 %                You need to compute thetagrad and cost.
 %                The groundTruth matrix might come in handy.
 
+h = exp(theta * data);
+%size(sum(h,1))
+cost = -sum(sum(groundTruth' * log(h./repmat(sum(h, 1), rows(h), 1)))) / numCases;
 
+%thetagrad = - data * (groundTruth - h./repmat(sum(h, 1), rows(h), 1)) / numCases;
 
+%for i=1:numCases
+%    for j=1:numClasses
+%        sumterm = 0;
+%        for l=1:numClasses
+%            sumterm = sumterm + exp(theta(l,:) * data(:, i));
+%        end
+%        h = exp(theta(j,:) * data(:, i));
+%        cost = cost - (labels(i)==j) * log(h/sumterm) / numCases;
+%    end
+%end
 
+for i=1:numCases
+    sumterm = 0;
+    for l=1:numClasses
+        sumterm = sumterm + exp(theta(l,:) * data(:, i));
+    end
+    p = exp(theta*data(:, i))./sumterm;
 
-
-
+    thetagrad = thetagrad - (groundTruth(:, i) - p) * data(:,i)' / numCases;
+end
 
 
 
