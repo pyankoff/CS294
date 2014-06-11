@@ -52,8 +52,8 @@ a3 = sigmoid(z3);
 cost = cost + 0.5 * sum(sum((a3 - data).^2)) / m;
 
 delta3 = -(data - a3) .* sigmgrad(z3);
-delta2 = (W2' * delta3 + beta * (-sparsityParam./rho + ...
-          (1-sparsityParam)./(1-rho))) .* sigmgrad(z2);
+sparsity_delta = -sparsityParam./rho + (1-sparsityParam)./(1-rho);
+delta2 = (W2' * delta3 + beta * repmat(sparsity_delta, 1, columns(delta3))) .* sigmgrad(z2);
 
 W1grad = W1grad + delta2 * data' / m;
 W2grad = W2grad + delta3 * a2' / m;

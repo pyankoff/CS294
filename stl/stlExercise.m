@@ -14,8 +14,8 @@
 %  change the parameters below.
 
 inputSize  = 28 * 28;
-numLabels  = 5;
 hiddenSize = 200;
+numLabels  = 5;
 sparsityParam = 0.1; % desired average activation of the hidden units.
                      % (This was denoted by the Greek alphabet rho, which looks like a lower-case "p",
 		             %  in the lecture notes). 
@@ -81,7 +81,7 @@ options.Method = 'lbfgs'; % Here, we use L-BFGS to optimize our cost
                           % need a function pointer with two outputs: the
                           % function value and the gradient. In our problem,
                           % sparseAutoencoderCost.m satisfies this.
-options.maxIter = 200;    % Maximum number of iterations of L-BFGS to run 
+options.maxIter = 100;    % Maximum number of iterations of L-BFGS to run 
 options.display = 'on';
 
 
@@ -128,7 +128,6 @@ lambda = 1e-4;
 theta = 0.005 * randn(numLabels * hiddenSize, 1);
 [cost, grad] = softmaxCost(theta, numLabels, hiddenSize, lambda, trainFeatures, trainLabels);
 
-options.maxIter = 100;
 softmaxModel = softmaxTrain(hiddenSize, numLabels, lambda, ...
                             trainFeatures, trainLabels, options);
 
@@ -150,8 +149,6 @@ softmaxModel = softmaxTrain(hiddenSize, numLabels, lambda, ...
 % and softmaxModel
 
 [pred] = softmaxPredict(softmaxModel, testFeatures);
-
-
 
 %% -----------------------------------------------------
 

@@ -30,9 +30,9 @@ pics_number = size(IMAGES, 3);
 
 
 for i=1:numpatches
-    pic = int32(1 + rand(1) * 9);
-    x = int32(1 + rand(1) * (w-patchsize-1));
-    y = int32(1 + rand(1) * (h-patchsize-1));
+    pic = round(1 + rand(1) * 9);
+    x = round(1 + rand(1) * (w-patchsize-1));
+    y = round(1 + rand(1) * (h-patchsize-1));
     %IMAGES(x+1:x+patchsize, y+1:y+patchsize, pic)
     patches(:, i) = IMAGES(x+1:x+patchsize, y+1:y+patchsize, pic)(:);
 end
