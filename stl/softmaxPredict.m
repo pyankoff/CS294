@@ -17,8 +17,11 @@ pred = zeros(1, size(data, 2));
 
 
 h = exp(theta * data);
-pred = mod(find(h==max(h)), 10);
-pred(pred==0) = 10;
+for i=1:size(data, 2)
+    pred(i) = find(h(:, i)==max(h(:, i)));
+end
+
+
 
 
 

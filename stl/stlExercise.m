@@ -21,7 +21,7 @@ sparsityParam = 0.1; % desired average activation of the hidden units.
 		             %  in the lecture notes). 
 lambda = 3e-3;       % weight decay parameter       
 beta = 3;            % weight of sparsity penalty term   
-maxIter = 100;
+%maxIter = 100;
 
 %% ======================================================================
 %  STEP 1: Load data from the MNIST database
@@ -33,8 +33,8 @@ maxIter = 100;
 % Load MNIST database files
 mnistData   = loadMNISTImages('mnist/train-images-idx3-ubyte');
 mnistLabels = loadMNISTLabels('mnist/train-labels-idx1-ubyte');
-size(mnistData)
-size(mnistLabels)
+%size(mnistData);
+%size(mnistLabels);
 % Set Unlabeled Set (All Images)
 
 % Simulate a Labeled and Unlabeled set
@@ -81,7 +81,7 @@ options.Method = 'lbfgs'; % Here, we use L-BFGS to optimize our cost
                           % need a function pointer with two outputs: the
                           % function value and the gradient. In our problem,
                           % sparseAutoencoderCost.m satisfies this.
-options.maxIter = 100;    % Maximum number of iterations of L-BFGS to run 
+options.maxIter = 200;    % Maximum number of iterations of L-BFGS to run 
 options.display = 'on';
 
 
@@ -125,11 +125,11 @@ softmaxModel = struct;
 % trainLabels
 
 lambda = 1e-4; 
-theta = 0.005 * randn(numLabels * inputSize, 1);
-[cost, grad] = softmaxCost(theta, numLabels, inputSize, lambda, trainFeatures, trainLabels);
+theta = 0.005 * randn(numLabels * hiddenSize, 1);
+[cost, grad] = softmaxCost(theta, numLabels, hiddenSize, lambda, trainFeatures, trainLabels);
 
 options.maxIter = 100;
-softmaxModel = softmaxTrain(inputSize, numLabels, lambda, ...
+softmaxModel = softmaxTrain(hiddenSize, numLabels, lambda, ...
                             trainFeatures, trainLabels, options);
 
 
@@ -149,7 +149,7 @@ softmaxModel = softmaxTrain(inputSize, numLabels, lambda, ...
 % Compute Predictions on the test set (testFeatures) using softmaxPredict
 % and softmaxModel
 
-[pred] = softmaxPredict(softmaxModel, inputData);
+[pred] = softmaxPredict(softmaxModel, testFeatures);
 
 
 

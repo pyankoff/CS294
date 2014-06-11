@@ -50,8 +50,8 @@ z3 = W2 * a2 + repmat(b2, 1, columns(a2));
 a3 = sigmoid(z3);
 
 cost = cost + 0.5 * sum(sum((a3 - data).^2)) / m;
-size(z2)
-size(rho)
+%size(z2);
+%size(rho);
 delta3 = -(data - a3) .* sigmgrad(z3);
 delta2 = (W2' * delta3 + beta * repmat(-sparsityParam./rho + ...
           (1-sparsityParam)./(1-rho), 1, columns(z2))) .* sigmgrad(z2);

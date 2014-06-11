@@ -8,9 +8,9 @@ assert(fp ~= -1, ['Could not open ', filename, '']);
 magic = fread(fp, 1, 'int32', 0, 'ieee-be');
 assert(magic == 2049, ['Bad magic number in ', filename, '']);
 
-numLabels = 10000;%fread(fp, 1, 'int32', 0, 'ieee-be');
+numLabels = 5000;%fread(fp, 1, 'int32', 0, 'ieee-be');
 
-labels = fread(fp, inf, 'unsigned char')(1:10000);
+labels = fread(fp, inf, 'unsigned char')(1:5000);
 
 assert(size(labels,1) == numLabels, 'Mismatch in label count');
 
