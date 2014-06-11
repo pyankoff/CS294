@@ -15,7 +15,7 @@ numCases = size(data, 2);
 
 groundTruth = full(sparse(labels, 1:numCases, 1));
 cost = 0;
-
+cost2 = 0;
 thetagrad = zeros(numClasses, inputSize);
 
 %% ---------- YOUR CODE HERE --------------------------------------
@@ -25,9 +25,13 @@ thetagrad = zeros(numClasses, inputSize);
 
 h = exp(theta * data);
 %size(sum(h,1))
-cost = -sum(sum(groundTruth' * log(h./repmat(sum(h, 1), rows(h), 1)))) / numCases;
+cost = -sum(sum(groundTruth .* ...
+    log(h./repmat(sum(h, 1), rows(h), 1)))) ./ ...
+    numCases + 0.5 * lambda * sum(sum(theta.^2));
 
-%thetagrad = - data * (groundTruth - h./repmat(sum(h, 1), rows(h), 1)) / numCases;
+thetagrad = -(groundTruth - ...
+    h./repmat(sum(h, 1), rows(h), 1)) * ...
+    data' ./ numCases + lambda * theta;
 
 %for i=1:numCases
 %    for j=1:numClasses
@@ -36,19 +40,19 @@ cost = -sum(sum(groundTruth' * log(h./repmat(sum(h, 1), rows(h), 1)))) / numCase
 %            sumterm = sumterm + exp(theta(l,:) * data(:, i));
 %        end
 %        h = exp(theta(j,:) * data(:, i));
-%        cost = cost - (labels(i)==j) * log(h/sumterm) / numCases;
+%        cost2 = cost2 - (labels(i)==j) * log(h/sumterm) / numCases;
 %    end
 %end
 
-for i=1:numCases
-    sumterm = 0;
-    for l=1:numClasses
-        sumterm = sumterm + exp(theta(l,:) * data(:, i));
-    end
-    p = exp(theta*data(:, i))./sumterm;
-
-    thetagrad = thetagrad - (groundTruth(:, i) - p) * data(:,i)' / numCases;
-end
+%for i=1:numCases
+%    sumterm = 0;
+%    for l=1:numClasses
+%        sumterm = sumterm + exp(theta(l,:) * data(:, i));
+%    end
+%    p = exp(theta*data(:, i))./sumterm;
+%
+%    thetagrad = thetagrad - (groundTruth(:, i) - p) * data(:,i)' / numCases;
+%end
 
 
 

@@ -45,11 +45,11 @@ inputData = images;
 % in order to speed up gradient checking. 
 % Here, we create synthetic dataset using random data for testing
 
-DEBUG = true; % Set DEBUG to true when debugging.
+DEBUG = false; % Set DEBUG to true when debugging.
 if DEBUG
     inputSize = 8;
-    inputData = randn(8, 100);
-    labels = randi(10, 100, 1);
+    inputData = randn(8, 20);
+    labels = randi(10, 20, 1);
 end
 
 % Randomly initialise theta

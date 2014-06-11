@@ -16,8 +16,9 @@ pred = zeros(1, size(data, 2));
 %                from 1.
 
 
-
-
+h = exp(theta * data);
+pred = mod(find(h==max(h)), 10);
+pred(pred==0) = 10;
 
 
 
