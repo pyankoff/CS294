@@ -29,12 +29,12 @@ beta = 3;            % weight of sparsity penalty term
 %  This loads our training and test data from the MNIST database files.
 %  We have sorted the data for you in this so that you will not have to
 %  change it.
-
+more off
 % Load MNIST database files
-mnistData   = loadMNISTImages('mnist/train-images-idx3-ubyte');
-mnistLabels = loadMNISTLabels('mnist/train-labels-idx1-ubyte');
-%size(mnistData);
-%size(mnistLabels);
+mnistData   = loadMNISTImages('mnist/train-images-idx3-ubyte')(:, 1:40000);
+mnistLabels = loadMNISTLabels('mnist/train-labels-idx1-ubyte')(1:40000);
+%size(mnistData)
+%size(mnistLabels)
 % Set Unlabeled Set (All Images)
 
 % Simulate a Labeled and Unlabeled set
@@ -81,7 +81,7 @@ options.Method = 'lbfgs'; % Here, we use L-BFGS to optimize our cost
                           % need a function pointer with two outputs: the
                           % function value and the gradient. In our problem,
                           % sparseAutoencoderCost.m satisfies this.
-options.maxIter = 100;    % Maximum number of iterations of L-BFGS to run 
+options.maxIter = 300;    % Maximum number of iterations of L-BFGS to run 
 options.display = 'on';
 
 
