@@ -34,8 +34,8 @@ beta = 3;              % weight of sparsity penalty term
 %  This loads our training data from the MNIST database files.
 
 % Load MNIST database files
-trainData = loadMNISTImages('mnist/train-images-idx3-ubyte');
-trainLabels = loadMNISTLabels('mnist/train-labels-idx1-ubyte');
+trainData = loadMNISTImages('mnist/train-images-idx3-ubyte')(:, 1:10000);
+trainLabels = loadMNISTLabels('mnist/train-labels-idx1-ubyte')(1:10000);
 
 trainLabels(trainLabels == 0) = 10; % Remap 0 to 10 since our labels need to start from 1
 
@@ -68,17 +68,7 @@ options.display = 'on';
                                    inputSize, hiddenSizeL1, ...
                                    lambda, sparsityParam, ...
                                    beta, trainData), ...
-                                   theta, options);
-
-
-
-
-
-
-
-
-
-
+                                   sae1Theta, options);
 
 % -------------------------------------------------------------------------
 
@@ -114,8 +104,6 @@ sae2Theta = initializeParameters(hiddenSizeL2, hiddenSizeL1);
                                    beta, sae1Features), ...
                                    sae2Theta, options);
 
-
-
 % -------------------------------------------------------------------------
 
 
@@ -144,16 +132,14 @@ saeSoftmaxTheta = 0.005 * randn(hiddenSizeL2 * numClasses, 1);
 
 softmaxModel = struct;  
 
-[cost, grad] = softmaxCost(theta, numLabels, hiddenSize, lambda, trainFeatures, trainLabels);
+[cost, grad] = softmaxCost(saeSoftmaxTheta, numClasses, ...
+                           hiddenSizeL2, lambda, sae2Features, trainLabels);
 
-softmaxModel = softmaxTrain(hiddenSizeL2, numLabels, lambda, ...
+softmaxModel = softmaxTrain(hiddenSizeL2, numClasses, lambda, ...
                             sae2Features, trainLabels, options);
 
 
 saeSoftmaxOptTheta = softmaxModel.optTheta(:);
-
-
-
 
 % -------------------------------------------------------------------------
 
@@ -187,19 +173,16 @@ stackedAETheta = [ saeSoftmaxOptTheta ; stackparams ];
 
 
 
+[cost, grad] = stackedAECost(stackedAETheta, inputSize, hiddenSizeL2, ...
+                             numClasses, netconfig, ...
+                             lambda, trainData, trainLabels);
 
 
-
-
-
-
-
-
-
-
-
-
-
+[stackedAEOptTheta, cost] = minFunc( @(p) stackedAECost(p, ...
+                                   inputSize, hiddenSizeL2, ...
+                                   numClasses, netconfig, ...
+                                   lambda, trainData, ...
+                                   trainLabels), stackedAETheta, options);
 
 % -------------------------------------------------------------------------
 

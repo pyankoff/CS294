@@ -61,28 +61,58 @@ groundTruth = full(sparse(labels, 1:M, 1));
 %                match exactly that of the size of the matrices in stack.
 %
 
-
-z2 = stackgrad{1}.w * data + repmat(stackgrad{1}.b, 1, columns(data));
+%3x5   3x4         4x5
+z2 = stack{1}.w * data + repmat(stack{1}.b, 1, columns(data));
 a2 = sigmoid(z2);
 
-z3 = stackgrad{2}.w * a2 + repmat(stackgrad{2}.b, 1, columns(a2));
+%5x5  5x3        3x5
+z3 = stack{2}.w * a2 + repmat(stack{2}.b, 1, columns(a2));
 a3 = sigmoid(z3);
 
-h = exp(softmaxTheta * a3);
-%size(sum(h,1))
+%2x5     2x5        5x5
+z4 = softmaxTheta * a3;
+h = exp(z4);
+
 cost = -sum(sum(groundTruth .* ...
-    log(h./repmat(sum(h, 1), rows(h), 1)))) ./ M; %+ 0.5 * lambda * sum(sum(theta.^2));
-
-delta3 = -(data - a3) .* sigmgrad(z3);
-delta2 = (W2' * delta3) .* sigmgrad(z2);
-
--(groundTruth - ...
-    h./repmat(sum(h, 1), rows(h), 1))
+    log(h./repmat(sum(h, 1), rows(h), 1)))) ./ M + ...
+    0.5 * lambda * sum(sum(softmaxTheta.^2));;
 
 
+%2x5             2x5      2x5                                     2x5
+%delta4 = - (groundTruth - h./repmat(sum(h, 1), rows(h), 1)) .* sigmgrad(z4);
+
+%size(delta4)
+
+%5x5          5x2             2x5     2x5       5x5         
+delta4 = -(softmaxTheta' * (groundTruth - ...
+         h./repmat(sum(h, 1), rows(h), 1))) .* sigmgrad(z3);
+
+%3x5        3x5!          5x5           3x5      
+delta3 = (stack{2}.w' * delta4) .* sigmgrad(z2);
+
+%4x5           4x3!       3x5                4x5
+delta2 = (stack{1}.w' * delta3) .* sigmgrad(data);
 
 
 
+%3x4!              3x5     5x4
+stackgrad{1}.w = delta3 * data' ./ M;
+
+%5x3!              5x5     5x3
+stackgrad{2}.w = delta4 * a2' ./ M;
+
+%2x5                 2x5                    5x5
+softmaxThetaGrad = -(groundTruth - ...
+         h./repmat(sum(h, 1), rows(h), 1)) * a3' ./ M + ...
+         lambda * softmaxTheta;
+
+
+
+%3x1                  3x5
+stackgrad{1}.b = sum(delta3, 2) ./ M;
+
+%5x1                   5x5
+stackgrad{2}.b = sum(delta4, 2) ./ M;
 
 
 % -------------------------------------------------------------------------
@@ -97,3 +127,8 @@ end
 function sigm = sigmoid(x)
     sigm = 1 ./ (1 + exp(-x));
 end
+
+function sigmg = sigmgrad(x)
+    sigmg = sigmoid(x) .* (1 - sigmoid(x));
+end
+
