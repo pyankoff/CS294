@@ -34,8 +34,8 @@ beta = 3;              % weight of sparsity penalty term
 %  This loads our training data from the MNIST database files.
 
 % Load MNIST database files
-trainData = loadMNISTImages('mnist/train-images-idx3-ubyte')(:, 1:10000);
-trainLabels = loadMNISTLabels('mnist/train-labels-idx1-ubyte')(1:10000);
+trainData = loadMNISTImages('mnist/train-images-idx3-ubyte')(:, 1:20000);
+trainLabels = loadMNISTLabels('mnist/train-labels-idx1-ubyte')(1:20000);
 
 trainLabels(trainLabels == 0) = 10; % Remap 0 to 10 since our labels need to start from 1
 
